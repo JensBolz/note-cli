@@ -24,3 +24,41 @@ cmd_add() {
   printf '%s' "$text" >"$NOTES_DIR/$hash"
   echo "$hash"
 }
+
+cmd_delete() {
+  if [[ $# -eq 0 ]]; then
+    echo "error: hash required" >&2
+    exit 1
+  fi
+  local hash="$1"
+  local path="$NOTES_DIR/$hash"
+  if [[ ! -f "$path" ]]; then
+    echo "error: no note with hash $hash" >&2
+    exit 1
+  fi
+  rm "$path"
+}
+
+main() {
+  [[ $# -ge 1 ]] || usage
+
+  case "$1" in
+    add)
+      shift
+      cmd_add "$@"
+      ;;
+    list)
+      cmd_list
+      ;;
+    delete)
+      shift
+      cmd_delete "$@"
+      ;;
+    *)
+      usage
+      ;;
+  esac
+}
+
+main "$@"
+
